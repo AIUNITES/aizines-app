@@ -177,10 +177,12 @@ const App = {
     });
     document.getElementById('settings-terms')?.addEventListener('click', (e) => {
       e.preventDefault();
+      this.closeSettingsModal();
       this.showLegalModal('terms');
     });
     document.getElementById('settings-privacy')?.addEventListener('click', (e) => {
       e.preventDefault();
+      this.closeSettingsModal();
       this.showLegalModal('privacy');
     });
     document.getElementById('close-legal-modal')?.addEventListener('click', () => this.closeLegalModal());
