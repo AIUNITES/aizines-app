@@ -156,12 +156,7 @@ const App = {
       if (e.target.id === 'cache-modal') this.closeCacheModal();
     });
 
-    // Changelog modal
-    document.getElementById('show-changelog-admin')?.addEventListener('click', (e) => this.openChangelog(e));
-    document.getElementById('close-changelog-modal')?.addEventListener('click', () => this.closeChangelog());
-    document.getElementById('changelog-modal')?.addEventListener('click', (e) => {
-      if (e.target.id === 'changelog-modal') this.closeChangelog();
-    });
+
 
     // Close dropdowns on outside click
     document.addEventListener('click', (e) => {
@@ -179,7 +174,6 @@ const App = {
         this.closeAdminModal();
         this.closeCacheModal();
         this.closeArticleReader();
-        this.closeChangelog();
       }
     });
 
@@ -318,15 +312,6 @@ const App = {
 
   closeArticleReader() {
     document.getElementById('article-reader-modal')?.classList.remove('active');
-  },
-
-  openChangelog(e) {
-    e?.preventDefault();
-    document.getElementById('changelog-modal').classList.add('active');
-  },
-
-  closeChangelog() {
-    document.getElementById('changelog-modal')?.classList.remove('active');
   },
 
   showAuthScreen(tab = 'login') {

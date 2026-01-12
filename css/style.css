@@ -346,12 +346,8 @@ body {
   color: #444 !important;
   margin-top: 0.75rem !important;
   font-family: 'Space Mono', monospace;
-  text-decoration: none;
-  transition: color 0.2s ease;
   display: inline-block;
-}
-.version-number:hover {
-  color: var(--accent) !important;
+  cursor: default;
 }
 
 .version-link {
@@ -374,6 +370,12 @@ body {
 }
 .admin-version strong {
   color: var(--accent);
+}
+
+#admin-changelog-tab .changelog-content {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
 }
 
 /* Changelog Modal */
