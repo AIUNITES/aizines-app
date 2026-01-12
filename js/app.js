@@ -158,6 +158,20 @@ const App = {
 
 
 
+    // Legal modal (Terms & Privacy)
+    document.getElementById('show-terms')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.showLegalModal('terms');
+    });
+    document.getElementById('show-privacy')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.showLegalModal('privacy');
+    });
+    document.getElementById('close-legal-modal')?.addEventListener('click', () => this.closeLegalModal());
+    document.getElementById('legal-modal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'legal-modal') this.closeLegalModal();
+    });
+
     // Close dropdowns on outside click
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.user-menu')) {
@@ -174,6 +188,7 @@ const App = {
         this.closeAdminModal();
         this.closeCacheModal();
         this.closeArticleReader();
+        this.closeLegalModal();
       }
     });
 
@@ -312,6 +327,29 @@ const App = {
 
   closeArticleReader() {
     document.getElementById('article-reader-modal')?.classList.remove('active');
+  },
+
+  showLegalModal(type) {
+    const modal = document.getElementById('legal-modal');
+    const title = document.getElementById('legal-modal-title');
+    const termsContent = document.getElementById('terms-content');
+    const privacyContent = document.getElementById('privacy-content');
+    
+    if (type === 'terms') {
+      title.textContent = 'Terms of Service';
+      termsContent.style.display = 'block';
+      privacyContent.style.display = 'none';
+    } else {
+      title.textContent = 'Privacy Policy';
+      termsContent.style.display = 'none';
+      privacyContent.style.display = 'block';
+    }
+    
+    modal.classList.add('active');
+  },
+
+  closeLegalModal() {
+    document.getElementById('legal-modal')?.classList.remove('active');
   },
 
   showAuthScreen(tab = 'login') {
