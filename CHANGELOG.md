@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.1.4] - 2026-01-11
+
+### Added
+- **README.md** - Comprehensive documentation
+  - Quick start guide
+  - Deploy from phone instructions (GitHub + Netlify)
+  - How to edit from phone
+  - File structure explanation
+  - Feature list
+- **.gitignore** - Standard ignore patterns for Git
+- **GitHub-ready structure** - Ready to push and auto-deploy
+
+---
+
 ## [1.1.3] - 2026-01-11
 
 ### Added

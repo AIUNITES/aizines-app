@@ -157,8 +157,6 @@ const App = {
     });
 
     // Changelog modal
-    document.getElementById('show-changelog')?.addEventListener('click', (e) => this.openChangelog(e));
-    document.getElementById('show-changelog-auth')?.addEventListener('click', (e) => this.openChangelog(e));
     document.getElementById('show-changelog-admin')?.addEventListener('click', (e) => this.openChangelog(e));
     document.getElementById('close-changelog-modal')?.addEventListener('click', () => this.closeChangelog());
     document.getElementById('changelog-modal')?.addEventListener('click', (e) => {
