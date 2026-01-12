@@ -167,6 +167,22 @@ const App = {
       e.preventDefault();
       this.showLegalModal('privacy');
     });
+    document.getElementById('footer-terms')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.showLegalModal('terms');
+    });
+    document.getElementById('footer-privacy')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.showLegalModal('privacy');
+    });
+    document.getElementById('settings-terms')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.showLegalModal('terms');
+    });
+    document.getElementById('settings-privacy')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.showLegalModal('privacy');
+    });
     document.getElementById('close-legal-modal')?.addEventListener('click', () => this.closeLegalModal());
     document.getElementById('legal-modal')?.addEventListener('click', (e) => {
       if (e.target.id === 'legal-modal') this.closeLegalModal();

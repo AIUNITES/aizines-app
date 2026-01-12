@@ -350,6 +350,40 @@ body {
   cursor: default;
 }
 
+.footer-links {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+}
+.footer-links a {
+  color: var(--gray);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.footer-links a:hover {
+  color: var(--accent);
+}
+.footer-links span {
+  margin: 0 0.5rem;
+  color: #444;
+}
+
+.legal-section h4 {
+  margin-bottom: 0.75rem;
+}
+.legal-links {
+  display: flex;
+  gap: 1.5rem;
+}
+.legal-links a {
+  color: var(--gray);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+.legal-links a:hover {
+  color: var(--accent);
+}
+
 .version-link {
   color: var(--accent);
   text-decoration: none;
