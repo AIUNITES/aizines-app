@@ -1,11 +1,13 @@
 /**
  * AIZines Auth Module
  * Handles user registration, login, and session management
+ * Supports both localStorage and SQL database authentication
  */
 
 const Auth = {
   /**
    * Register new user
+   * Saves to both localStorage and SQL database (if available)
    */
   signup(displayName, username, email, password) {
     // Check if public signup is allowed
@@ -36,18 +38,26 @@ const Auth = {
       throw new Error('Please enter a valid email address');
     }
 
-    // Check if username exists
+    // Check if username exists in localStorage
     if (Storage.getUserByUsername(username)) {
       throw new Error('Username already taken');
     }
+    
+    // Check if username exists in SQL database
+    if (this.checkUsernameInSQL(username)) {
+      throw new Error('Username already taken');
+    }
 
-    // Create user
+    // Create user in localStorage
     const user = Storage.createUser({
       displayName,
       username,
       email,
-      password // In production, hash this!
+      password
     });
+
+    // Also save to SQL database if available
+    this.saveUserToSQL(user, password);
 
     // Auto login after signup (only if email verification not required)
     if (!requireEmail || user.emailVerified) {
@@ -58,32 +68,107 @@ const Auth = {
   },
 
   /**
+   * Check if username exists in SQL database
+   */
+  checkUsernameInSQL(username) {
+    if (typeof SQLDatabase === 'undefined' || !SQLDatabase.isLoaded || !SQLDatabase.db) {
+      return false;
+    }
+    return SQLDatabase.checkUsernameExists(username);
+  },
+
+  /**
+   * Save user to SQL database
+   */
+  saveUserToSQL(user, password) {
+    if (typeof SQLDatabase === 'undefined' || !SQLDatabase.isLoaded || !SQLDatabase.db) {
+      return false;
+    }
+    return SQLDatabase.saveUser(user, password);
+  },
+
+  /**
    * Login user
+   * Checks localStorage first, then SQL database if available
    */
   login(username, password) {
     if (!username || !password) {
       throw new Error('Please enter username and password');
     }
 
-    const user = Storage.getUserByUsername(username);
+    // First, try localStorage (original behavior)
+    let user = Storage.getUserByUsername(username);
     
-    if (!user) {
-      throw new Error('User not found');
+    if (user) {
+      // Found in localStorage - check password
+      if (user.password !== password) {
+        throw new Error('Incorrect password');
+      }
+      
+      // Check if email verification is required and not verified
+      if (Storage.isEmailVerificationRequired() && !user.emailVerified) {
+        throw new Error('Please verify your email before logging in');
+      }
+      
+      Storage.setCurrentUser(user.username);
+      return user;
     }
-
-    if (user.password !== password) {
-      throw new Error('Incorrect password');
+    
+    // Not found in localStorage - try SQL database if available
+    if (typeof SQLDatabase !== 'undefined' && SQLDatabase.isLoaded && SQLDatabase.db) {
+      const dbUser = SQLDatabase.getUserByUsername(username);
+      
+      if (dbUser) {
+        // Check password
+        if (dbUser.password !== password) {
+          throw new Error('Incorrect password');
+        }
+        
+        // Create localStorage user from DB user for session
+        user = Storage.createUser({
+          displayName: dbUser.displayName || username,
+          username: dbUser.username,
+          email: dbUser.email || '',
+          password: password,
+          isAdmin: dbUser.role === 'admin'
+        });
+        
+        console.log('[Auth] User authenticated from SQL database:', username);
+        
+        if (typeof App !== 'undefined' && App.showToast) {
+          App.showToast('🐙 Logged in from AIUNITES database!', 'success');
+        }
+        
+        Storage.setCurrentUser(user.username);
+        return user;
+      }
     }
+    
+    throw new Error('User not found');
+  },
 
-    // Check if email verification is required and not verified
-    if (Storage.isEmailVerificationRequired() && !user.emailVerified) {
-      throw new Error('Please verify your email before logging in');
+  /**
+   * Demo login
+   */
+  loginDemo() {
+    const demoUsername = 'demo';
+    const demoPassword = 'demo123';
+    
+    try {
+      return this.login(demoUsername, demoPassword);
+    } catch (e) {
+      // If demo user doesn't exist, create it locally
+      console.log('[Auth] Creating local demo user');
+      const user = Storage.createUser({
+        displayName: 'Demo User',
+        username: demoUsername,
+        email: 'demo@aizines.app',
+        password: demoPassword,
+        isAdmin: false
+      });
+      Storage.setCurrentUser(user.username);
+      return user;
     }
-
-    // Set current user
-    Storage.setCurrentUser(user.username);
-
-    return user;
   },
 
   /**
