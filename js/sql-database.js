@@ -456,6 +456,138 @@ const SQLDatabase = {
     } catch (e) {
       return 0;
     }
+  },
+  
+  /**
+   * Run SQL query
+   */
+  runQuery() {
+    const input = document.getElementById('sql-query-input');
+    const query = input?.value?.trim();
+    
+    if (!query) {
+      alert('Please enter a SQL query');
+      return;
+    }
+    
+    if (!this.db) {
+      this.createNewDatabase();
+    }
+    
+    const startTime = performance.now();
+    
+    try {
+      const results = this.db.exec(query);
+      const endTime = performance.now();
+      const duration = (endTime - startTime).toFixed(2);
+      
+      // Update query time
+      const timeEl = document.getElementById('sql-query-time');
+      if (timeEl) timeEl.textContent = `${duration}ms`;
+      
+      // Display results
+      this.displayResults(results);
+      
+      // Auto-save
+      this.autoSave();
+      
+      console.log('[SQLDatabase] Query executed:', query);
+      
+    } catch (error) {
+      console.error('[SQLDatabase] Query error:', error);
+      this.displayError(error.message);
+    }
+  },
+  
+  /**
+   * Quick query - insert and run immediately
+   */
+  quickQuery(type) {
+    const queries = {
+      users: 'SELECT id, username, display_name, email, role, site, created_at FROM users ORDER BY id DESC LIMIT 50;',
+      tables: "SELECT name, type FROM sqlite_master WHERE type='table' ORDER BY name;",
+      count: 'SELECT COUNT(*) as total_users FROM users;',
+      sites: 'SELECT site, COUNT(*) as user_count FROM users GROUP BY site ORDER BY user_count DESC;'
+    };
+    
+    const query = queries[type];
+    if (query) {
+      const input = document.getElementById('sql-query-input');
+      if (input) input.value = query;
+      this.runQuery();
+    }
+  },
+  
+  /**
+   * Display query results
+   */
+  displayResults(results) {
+    const container = document.getElementById('sql-results-container');
+    const countEl = document.getElementById('sql-results-count');
+    
+    if (!container) return;
+    
+    if (!results || results.length === 0) {
+      container.innerHTML = '<div style="color:#10b981;text-align:center;">✅ Query executed successfully (no results)</div>';
+      if (countEl) countEl.textContent = '';
+      return;
+    }
+    
+    let html = '';
+    let totalRows = 0;
+    
+    results.forEach((result) => {
+      const { columns, values } = result;
+      totalRows += values.length;
+      
+      html += '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;">';
+      
+      // Headers
+      html += '<thead><tr>';
+      columns.forEach(col => {
+        html += `<th style="padding:8px 12px;text-align:left;border-bottom:2px solid rgba(255,255,255,0.2);color:#8b5cf6;white-space:nowrap;">${this.escapeHtml(col)}</th>`;
+      });
+      html += '</tr></thead>';
+      
+      // Rows
+      html += '<tbody>';
+      values.forEach((row, i) => {
+        const bg = i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.03)';
+        html += `<tr style="background:${bg};">`;
+        row.forEach(cell => {
+          const displayValue = cell === null 
+            ? '<span style="color:#666;font-style:italic;">NULL</span>' 
+            : this.escapeHtml(String(cell));
+          html += `<td style="padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.1);white-space:nowrap;">${displayValue}</td>`;
+        });
+        html += '</tr>';
+      });
+      html += '</tbody></table></div>';
+    });
+    
+    container.innerHTML = html;
+    if (countEl) countEl.textContent = `${totalRows} row${totalRows !== 1 ? 's' : ''}`;
+  },
+  
+  /**
+   * Display error
+   */
+  displayError(message) {
+    const container = document.getElementById('sql-results-container');
+    if (container) {
+      container.innerHTML = `<div style="color:#ef4444;text-align:center;">❌ Error: ${this.escapeHtml(message)}</div>`;
+    }
+    const countEl = document.getElementById('sql-results-count');
+    if (countEl) countEl.textContent = '';
+  },
+  
+  /**
+   * Escape HTML
+   */
+  escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   }
 };
 
