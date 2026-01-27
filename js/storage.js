@@ -52,24 +52,31 @@ const Storage = {
 
   /**
    * Initialize storage with default data if empty
+   * Admin comes from local-users.js (gitignored) if present
    */
   init() {
-    // Initialize users with admin and demo accounts
+    // Initialize users with demo accounts
     if (!localStorage.getItem(this.KEYS.USERS)) {
       const users = {};
-      // Admin user
-      users[this.DEFAULT_ADMIN.username] = {
-        id: 'admin_001',
-        username: this.DEFAULT_ADMIN.username,
-        displayName: this.DEFAULT_ADMIN.displayName,
-        email: this.DEFAULT_ADMIN.email,
-        password: this.DEFAULT_ADMIN.password,
-        isAdmin: true,
-        emailVerified: true,
-        createdAt: new Date().toISOString(),
-        settings: { apiKey: '' }
-      };
-      // Demo user
+      
+      // Admin user from LOCAL_USERS (js/local-users.js - gitignored)
+      if (typeof LOCAL_USERS !== 'undefined' && LOCAL_USERS.admin) {
+        const admin = LOCAL_USERS.admin;
+        users[admin.username] = {
+          id: 'admin_001',
+          username: admin.username,
+          displayName: admin.displayName,
+          email: admin.email,
+          password: admin.password,
+          isAdmin: true,
+          emailVerified: true,
+          createdAt: new Date().toISOString(),
+          settings: { apiKey: '' }
+        };
+        console.log('[Storage] Admin loaded from local-users.js');
+      }
+      
+      // Demo user (public)
       users[this.DEFAULT_DEMO.username] = {
         id: 'demo_001',
         username: this.DEFAULT_DEMO.username,
@@ -81,7 +88,8 @@ const Storage = {
         createdAt: new Date().toISOString(),
         settings: { apiKey: '' }
       };
-      // Claude creator
+      
+      // Claude creator (public)
       users[this.DEFAULT_CLAUDE.username] = {
         id: 'claude_001',
         username: this.DEFAULT_CLAUDE.username,
@@ -93,25 +101,29 @@ const Storage = {
         createdAt: new Date().toISOString(),
         settings: { apiKey: '' }
       };
+      
       localStorage.setItem(this.KEYS.USERS, JSON.stringify(users));
     } else {
-      // Ensure admin and demo exist even if users already initialized
+      // Ensure admin exists if LOCAL_USERS available and admin missing
       const users = this.getUsers();
       let updated = false;
       
-      if (!users['admin']) {
-        users['admin'] = {
+      // Add admin from LOCAL_USERS if missing
+      if (typeof LOCAL_USERS !== 'undefined' && LOCAL_USERS.admin && !users[LOCAL_USERS.admin.username]) {
+        const admin = LOCAL_USERS.admin;
+        users[admin.username] = {
           id: 'admin_001',
-          username: this.DEFAULT_ADMIN.username,
-          displayName: this.DEFAULT_ADMIN.displayName,
-          email: this.DEFAULT_ADMIN.email,
-          password: this.DEFAULT_ADMIN.password,
+          username: admin.username,
+          displayName: admin.displayName,
+          email: admin.email,
+          password: admin.password,
           isAdmin: true,
           emailVerified: true,
           createdAt: new Date().toISOString(),
           settings: { apiKey: '' }
         };
         updated = true;
+        console.log('[Storage] Admin added from local-users.js');
       }
       
       if (!users['demo']) {
