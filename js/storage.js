@@ -17,20 +17,20 @@ const Storage = {
     SYSTEM_SETTINGS: 'aizines_system_settings'
   },
 
-  // Default admin credentials - Local fallback only
-  // For shared admin access, use GitHub sync database
+  // Default admin credentials - visible in source code
+  // For static sites, "auth" is UX, not security
   DEFAULT_ADMIN: {
-    username: 'localadmin',
-    password: 'AzLocalDev!2026',
-    displayName: 'Local Administrator',
+    username: 'admin',
+    password: 'admin',  // Visible in source - demo site only
+    displayName: 'Administrator',
     email: 'admin@aizines.local',
     isAdmin: true
   },
 
-  // Demo user credentials - Secure demo access
+  // Demo user credentials
   DEFAULT_DEMO: {
     username: 'demo',
-    password: 'AzDemo!2026',
+    password: 'demo',  // Intentionally simple - PUBLIC demo
     displayName: 'Demo User',
     email: 'demo@aizines.demo',
     isAdmin: false
@@ -39,7 +39,7 @@ const Storage = {
   // Claude creator account
   DEFAULT_CLAUDE: {
     username: 'claude',
-    password: 'ClaudeCreator!2026',
+    password: 'claude',  // Visible in source
     displayName: 'Claude',
     email: 'claude@aiunites.ai',
     isAdmin: false
