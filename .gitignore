@@ -16,6 +16,10 @@ node_modules/
 .env
 .env.local
 
+# Local user credentials (never publish)
+js/local-users.js
+local-users.js
+
 # Build outputs
 dist/
 build/

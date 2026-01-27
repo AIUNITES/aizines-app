@@ -17,29 +17,23 @@ const Storage = {
     SYSTEM_SETTINGS: 'aizines_system_settings'
   },
 
-  // Default admin credentials - visible in source code
-  // For static sites, "auth" is UX, not security
-  DEFAULT_ADMIN: {
-    username: 'admin',
-    password: 'admin',  // Visible in source - demo site only
-    displayName: 'Administrator',
-    email: 'admin@aizines.local',
-    isAdmin: true
-  },
+  // Admin credentials loaded from local-users.js (gitignored)
+  // If LOCAL_USERS not available, no admin created locally
+  DEFAULT_ADMIN: null,  // Set from LOCAL_USERS if available
 
-  // Demo user credentials
+  // Demo user credentials (public)
   DEFAULT_DEMO: {
     username: 'demo',
-    password: 'demo',  // Intentionally simple - PUBLIC demo
+    password: 'demo',
     displayName: 'Demo User',
     email: 'demo@aizines.demo',
     isAdmin: false
   },
 
-  // Claude creator account
+  // Claude creator account (public demo)
   DEFAULT_CLAUDE: {
     username: 'claude',
-    password: 'claude',  // Visible in source
+    password: 'claude',
     displayName: 'Claude',
     email: 'claude@aiunites.ai',
     isAdmin: false
