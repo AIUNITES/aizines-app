@@ -17,30 +17,31 @@ const Storage = {
     SYSTEM_SETTINGS: 'aizines_system_settings'
   },
 
-  // Default admin credentials
+  // Default admin credentials - Local fallback only
+  // For shared admin access, use GitHub sync database
   DEFAULT_ADMIN: {
-    username: 'admin',
-    password: 'admin123',
-    displayName: 'Administrator',
-    email: 'admin@aizines.com',
+    username: 'localadmin',
+    password: 'AzLocalDev!2026',
+    displayName: 'Local Administrator',
+    email: 'admin@aizines.local',
     isAdmin: true
   },
 
-  // Demo user credentials
+  // Demo user credentials - Secure demo access
   DEFAULT_DEMO: {
     username: 'demo',
-    password: 'demo123',
+    password: 'AzDemo!2026',
     displayName: 'Demo User',
-    email: 'demo@aizines.com',
+    email: 'demo@aizines.demo',
     isAdmin: false
   },
 
   // Claude creator account
   DEFAULT_CLAUDE: {
     username: 'claude',
-    password: 'anthropic2026',
+    password: 'ClaudeCreator!2026',
     displayName: 'Claude',
-    email: 'claude@anthropic.com',
+    email: 'claude@aiunites.ai',
     isAdmin: false
   },
 
