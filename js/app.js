@@ -469,15 +469,11 @@ const App = {
 
   loginAsDemo() {
     try {
-      Auth.login('demo', 'demo123');
+      Auth.loginDemo();
       this.showToast('Welcome to the demo! Explore freely.', 'success');
       this.showDashboard();
     } catch (error) {
-      // If demo user doesn't exist, reset and try again
-      Storage.clearAll();
-      Auth.login('demo', 'demo123');
-      this.showToast('Welcome to the demo! Explore freely.', 'success');
-      this.showDashboard();
+      this.showToast('Demo unavailable: ' + error.message, 'error');
     }
   },
 

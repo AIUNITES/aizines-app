@@ -148,17 +148,21 @@ const Auth = {
   },
 
   /**
-   * Demo login
+   * Demo login — always succeeds by creating or resetting the demo user
    */
   loginDemo() {
     const demoUsername = 'demo';
     const demoPassword = 'demo123';
-    
+    // Delete any existing demo user (may have wrong password from old sessions)
+    const existing = Storage.getUserByUsername(demoUsername);
+    if (existing) {
+      // Force-update the password so login always works
+      Storage.updateUser(demoUsername, { password: demoPassword });
+    }
     try {
       return this.login(demoUsername, demoPassword);
     } catch (e) {
-      // If demo user doesn't exist, create it locally
-      console.log('[Auth] Creating local demo user');
+      // User didn't exist — create it
       const user = Storage.createUser({
         displayName: 'Demo User',
         username: demoUsername,
