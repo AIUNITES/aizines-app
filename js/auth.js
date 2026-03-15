@@ -9,7 +9,7 @@ const Auth = {
    * Register new user
    * Saves to both localStorage and SQL database (if available)
    */
-  signup(displayName, username, email, password) {
+  async signup(displayName, username, email, password) {
     // Check if public signup is allowed
     if (!Storage.isPublicSignupAllowed()) {
       throw new Error('Public registration is currently disabled');
@@ -48,15 +48,8 @@ const Auth = {
       throw new Error('Username already taken');
     }
 
-    // Create user in localStorage
-    const user = Storage.createUser({
-      displayName,
-      username,
-      email,
-      password
-    });
-
-    // Also save to SQL database if available
+    const passwordHash = await PasswordUtils.hash(password);
+    const user = Storage.createUser({ displayName, username, email, passwordHash });
     this.saveUserToSQL(user, password);
 
     // Auto login after signup (only if email verification not required)
@@ -91,7 +84,7 @@ const Auth = {
    * Login user
    * Checks localStorage first, then SQL database if available
    */
-  login(username, password) {
+  async login(username, password) {
     if (!username || !password) {
       throw new Error('Please enter username and password');
     }
@@ -100,18 +93,22 @@ const Auth = {
     let user = Storage.getUserByUsername(username);
     
     if (user) {
-      // Found in localStorage - check password
-      if (user.password !== password) {
-        throw new Error('Incorrect password');
+      let valid = false;
+      if (user.passwordHash) {
+        valid = await PasswordUtils.verify(password, user.passwordHash);
+      } else if (user.password) {
+        valid = (user.password === password);
+        if (valid) {
+          const migrated = await PasswordUtils.migrate(user, password);
+          Storage.updateUser(user.username, migrated);
+        }
       }
-      
-      // Check if email verification is required and not verified
+      if (!valid) throw new Error('Incorrect password');
       if (Storage.isEmailVerificationRequired() && !user.emailVerified) {
         throw new Error('Please verify your email before logging in');
       }
-      
       Storage.setCurrentUser(user.username);
-      return user;
+      return Storage.getUserByUsername(user.username);
     }
     
     // Not found in localStorage - try SQL database if available
@@ -150,28 +147,19 @@ const Auth = {
   /**
    * Demo login — always succeeds by creating or resetting the demo user
    */
-  loginDemo() {
+  async loginDemo() {
     const demoUsername = 'demo';
     const demoPassword = 'demo123';
-    // Delete any existing demo user (may have wrong password from old sessions)
-    const existing = Storage.getUserByUsername(demoUsername);
-    if (existing) {
-      // Force-update the password so login always works
-      Storage.updateUser(demoUsername, { password: demoPassword });
-    }
     try {
-      return this.login(demoUsername, demoPassword);
+      return await this.login(demoUsername, demoPassword);
     } catch (e) {
-      // User didn't exist — create it
-      const user = Storage.createUser({
-        displayName: 'Demo User',
-        username: demoUsername,
-        email: 'demo@aizines.app',
-        password: demoPassword,
-        isAdmin: false
-      });
-      Storage.setCurrentUser(user.username);
-      return user;
+      if (e.message === 'User not found') {
+        const passwordHash = await PasswordUtils.hash(demoPassword);
+        const user = Storage.createUser({ displayName: 'Demo User', username: demoUsername, email: 'demo@aizines.app', passwordHash, isAdmin: false });
+        Storage.setCurrentUser(user.username);
+        return user;
+      }
+      throw e;
     }
   },
 
@@ -239,20 +227,17 @@ const Auth = {
   /**
    * Change password
    */
-  changePassword(currentPassword, newPassword) {
+  async changePassword(currentPassword, newPassword) {
     const user = this.getCurrentUser();
-    if (!user) {
-      throw new Error('Not logged in');
-    }
-
-    if (user.password !== currentPassword) {
-      throw new Error('Current password is incorrect');
-    }
-
-    if (newPassword.length < 6) {
-      throw new Error('New password must be at least 6 characters');
-    }
-
-    return Storage.updateUser(user.username, { password: newPassword });
+    if (!user) throw new Error('Not logged in');
+    if (newPassword.length < 6) throw new Error('New password must be at least 6 characters');
+    const valid = user.passwordHash
+      ? await PasswordUtils.verify(currentPassword, user.passwordHash)
+      : (user.password === currentPassword);
+    if (!valid) throw new Error('Current password is incorrect');
+    const passwordHash = await PasswordUtils.hash(newPassword);
+    const updated = { passwordHash };
+    if (user.password) updated.password = undefined; // clear legacy field
+    return Storage.updateUser(user.username, updated);
   }
 };
