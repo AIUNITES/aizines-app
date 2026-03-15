@@ -99,8 +99,8 @@ const Auth = {
       } else if (user.password) {
         valid = (user.password === password);
         if (valid) {
-          const migrated = await PasswordUtils.migrate(user, password);
-          Storage.updateUser(user.username, migrated);
+          const hash = await PasswordUtils.hash(password);
+          Storage.updateUser(user.username, { passwordHash: hash, password: null });
         }
       }
       if (!valid) throw new Error('Incorrect password');
@@ -236,8 +236,6 @@ const Auth = {
       : (user.password === currentPassword);
     if (!valid) throw new Error('Current password is incorrect');
     const passwordHash = await PasswordUtils.hash(newPassword);
-    const updated = { passwordHash };
-    if (user.password) updated.password = undefined; // clear legacy field
-    return Storage.updateUser(user.username, updated);
+    return Storage.updateUser(user.username, { passwordHash, password: null });
   }
 };
