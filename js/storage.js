@@ -693,7 +693,7 @@ const Storage = {
       username: username,
       displayName: userData.displayName,
       email: userData.email || '',
-      password: userData.password, // In production, this should be hashed!
+      passwordHash: userData.passwordHash, // set by Auth.signup after hashing
       isAdmin: userData.isAdmin || false,
       emailVerified: !systemSettings.requireEmailVerification, // Auto-verify if not required
       verificationToken: systemSettings.requireEmailVerification ? this.generateId() : null,
@@ -954,8 +954,14 @@ const Storage = {
    * Export all data as JSON
    */
   exportData() {
+    const rawUsers = this.getAll(this.KEYS.USERS);
+    const safeUsers = {};
+    Object.entries(rawUsers).forEach(([k, u]) => {
+      const { password, passwordHash, ...safe } = u;
+      safeUsers[k] = safe;
+    });
     return {
-      users: this.getAll(this.KEYS.USERS),
+      users: safeUsers,
       zines: this.getAll(this.KEYS.ZINES),
       issues: this.getAll(this.KEYS.ISSUES),
       settings: this.getAll(this.KEYS.SETTINGS),
