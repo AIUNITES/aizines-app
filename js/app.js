@@ -258,7 +258,7 @@ const App = {
     if (!grid) return;
 
     if (claudeIssues.length === 0) {
-      grid.innerHTML = '<p style="color: var(--gray); grid-column: 1/-1;">No articles yet. Check back soon!</p>';
+      grid.innerHTML = '<p style="color: var(--gray); grid-column: 1/-1;">No articles published yet. Start writing your first issue!</p>';
       return;
     }
 
