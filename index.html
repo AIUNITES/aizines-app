@@ -87,7 +87,7 @@
         <div class="landing-nav-links" id="az-nav">
           <a href="compare.html" style="font-size:0.88rem;font-weight:600;color:#8b5cf6;text-decoration:none;margin-right:0.5rem;" onclick="azClose()">⚖️ Compare AI</a>
           <a href="write-for-us.html" style="font-size:0.88rem;font-weight:600;color:#ff3366;text-decoration:none;margin-right:0.5rem;" onclick="azClose()">✍️ Write for Us</a>
-          <button class="btn-primary" id="landing-login-btn">Log In</button>
+          <button class="btn-secondary" id="landing-login-btn">Log In</button>
         </div>
         <button class="landing-hamburger" id="az-hbg" aria-label="Menu" onclick="var m=document.getElementById('az-nav');m.style.top=this.closest('nav').getBoundingClientRect().bottom+'px';this.classList.toggle('open');m.classList.toggle('open')"><span></span><span></span><span></span></button>
       </nav>
@@ -101,7 +101,7 @@
           <div class="hero-cta">
             <div class="btn-row">
               <button class="btn-primary btn-large" id="landing-start-btn">Start Creating Free</button>
-              <button class="btn-secondary btn-large" id="landing-demo-btn">👁️ Try Demo</button>
+    
             </div>
             <span class="hero-note">No credit card required</span>
           </div>
@@ -297,7 +297,7 @@
         </form>
 
         <div class="auth-footer">
-          <button class="btn-secondary full-width" id="auth-demo-btn" style="margin-bottom: 1rem;">👁️ Try Demo Instead</button>
+          <button class="btn-secondary full-width" id="auth-demo-btn" style="display:none;">👁️ Try Demo Instead</button>
           <p>By continuing, you agree to our Terms of Service</p>
           <a href="#" id="reset-app-link" class="reset-link">🔄 Reset App to Defaults</a>
           <span class="version-number">v1.1.7</span>
@@ -724,7 +724,7 @@
 
           <div class="settings-divider"></div>
 
-          <div class="cache-section">
+          <div class="cache-section" style="display:none;">
             <h4>🗄️ View My Cache</h4>
             <p class="cache-info">See what's stored in your browser for AIZines</p>
             <button type="button" class="btn-secondary full-width" id="view-cache-btn">
