@@ -88,7 +88,7 @@
           <a href="write-for-us.html" style="font-size:0.88rem;font-weight:600;color:#ff3366;text-decoration:none;margin-right:0.5rem;" onclick="azClose()">✍️ Write for Us</a>
           <button class="btn-secondary" id="landing-login-btn">Log In</button>
         </div>
-        <button class="landing-hamburger" id="az-hbg" aria-label="Menu" onclick="var m=document.getElementById('az-nav');m.style.top=this.closest('nav').getBoundingClientRect().bottom+'px';this.classList.toggle('open');m.classList.toggle('open')"><span></span><span></span><span></span></button>
+        <button class="landing-hamburger" id="az-hbg" aria-label="Menu" onclick="var m=document.getElementById('az-nav');this.classList.toggle('open');m.classList.toggle('open')"><span></span><span></span><span></span></button>
       </nav>
       <script>function azClose(){document.getElementById('az-nav').classList.remove('open');document.getElementById('az-hbg').classList.remove('open');}</script>
 
