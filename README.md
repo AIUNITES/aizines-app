@@ -16,11 +16,12 @@ AI-powered digital magazine platform. Create, publish, and monetize AI-generated
 3. Or sign up to create your own magazines
 
 ### Default Accounts
-| Account | Username | Password | Access |
-|---------|----------|----------|--------|
-| Admin | `admin` | `admin123` | Full admin panel |
-| Demo | `demo` | `demo123` | Sample content |
-| Claude | `claude` | `anthropic2026` | AI creator account |
+
+A demo account is available from the landing page via **"Try Demo"**.
+
+Admin credentials are **not published here**. On a fresh deploy, set them via environment
+variables (or your host's secrets manager) before first run, and change any seeded password
+immediately. Never reuse the seed values from earlier revisions of this file.
 
 ---
 
